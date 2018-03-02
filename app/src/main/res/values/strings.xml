@@ -14,4 +14,12 @@
     <string name="create_a_new_account">Create a new account</string>
     <string name="future_appointments">Future Appointments</string>
     <string name="create_future_appointment">Create Future Appointment</string>
+    <string name="create_an_appointment">Create an Appointment</string>
+    <string name="additional_information_for_service_provider">Additional Information for Service Provider</string>
+    <string name="date">Date</string>
+    <string name="duration">Duration</string>
+    <string name="cost">Cost</string>
+    <string name="service_name">Service Name</string>
+    <string name="confirm_appointment">Confirm Appointment</string>
+    <string name="time">Time</string>
 </resources>

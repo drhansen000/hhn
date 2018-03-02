@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CreateAccountActivity" />
-        <activity android:name=".FutureAppointmentsActivity"></activity>
+        <activity android:name=".FutureAppointmentsActivity" />
+        <activity android:name=".CreateAppointmentActivity"></activity>
     </application>
 
 </manifest>
