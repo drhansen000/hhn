@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">HH&amp;N_Mobile</string>
+    <string name="create_your_account">Create Your Account</string>
+    <string name="full_name">Full Name</string>
+    <string name="password">Password</string>
+    <string name="verify_password">Verify Password</string>
+    <string name="email_address">Email Address</string>
+    <string name="phone_optional">Phone (Optional)</string>
+    <string name="create_account">Create Account</string>
+    <string name="sign_in_to_your_account">Sign in to your account</string>
+    <string name="email">Email</string>
+    <string name="sign_in">Sign In</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="create_a_new_account">Create a new account</string>
+    <string name="future_appointments">Future Appointments</string>
+    <string name="create_future_appointment">Create Future Appointment</string>
 </resources>
