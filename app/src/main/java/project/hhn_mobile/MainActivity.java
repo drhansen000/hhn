@@ -14,7 +14,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("appointment");
+    DatabaseReference myRef = database.getReference("test/test1");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testWriteDatabase(View view) {
-        myRef.setValue("Hello");
+        myRef.setValue("Hansen");
     }
 
     public void testReadDatabase(View view) {
