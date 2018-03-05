@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "420430877929",
+    "firebase_url": "https://hhnmobile-d003e.firebaseio.com",
+    "project_id": "hhnmobile-d003e",
+    "storage_bucket": "hhnmobile-d003e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420430877929:android:ca6a53753c818f48",
+        "android_client_info": {
+          "package_name": "project.hhn_mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420430877929-f48lhs7u4rt26n435fslkhs3g61bi7c3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "project.hhn_mobile",
+            "certificate_hash": "2d94a2d189bb44983815554462eab45a2b0084b7"
+          }
+        },
+        {
+          "client_id": "420430877929-eailbi5lof5o41ij31oogtgtkevudpse.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "project.hhn_mobile",
+            "certificate_hash": "267ab1cbb95d068ce418c446ca3faf9cf2d3e27a"
+          }
+        },
+        {
+          "client_id": "420430877929-tepv97pfusd94mjkor5rrp20bm5ed0bp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGVNQsAwanoUjl6Kw_uj6SQrris0IuyS8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420430877929-tepv97pfusd94mjkor5rrp20bm5ed0bp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
