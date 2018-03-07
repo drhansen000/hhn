@@ -27,9 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("appointment/test");
-
     EditText editText;
     EditText editText2;
 
@@ -45,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void signIn(View view) {
-        Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+        final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
 
         String email = editText.getText().toString();
         String password = editText2.getText().toString();
@@ -59,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             //FirebaseUser user = mAuth.getCurrentUser();
                             //updateUI(user);
+                            startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
@@ -70,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
                         // ...
                     }
                 });
-
-        startActivity(intent);
     }
 
     public void signUp(View view) {
@@ -83,29 +79,5 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EMAIL_MESSAGE, email);
         intent.putExtra(PASS_MESSAGE, password);
         startActivity(intent);
-    }
-
-    public void testWriteDatabase(View view) {
-        myRef.setValue("Working");
-    }
-
-    public void testReadDatabase(View view) {
-        myRef.addValueEventListener(new ValueEventListener() {
-            static final String TAG = "TAG: ";
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 }

@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class CreateAccountActivity extends AppCompatActivity {
 
@@ -41,7 +42,7 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     public void createAccount(View view) {
-        Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+        final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -52,6 +53,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                             Log.d(TAG, "createUserWithEmail:success");
                             //FirebaseUser user = mAuth.getCurrentUser();
                             //updateUI(user);
+                            startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -63,7 +65,5 @@ public class CreateAccountActivity extends AppCompatActivity {
                         // ...
                     }
                 });
-
-        startActivity(intent);
     }
 }
