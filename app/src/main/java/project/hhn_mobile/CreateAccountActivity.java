@@ -41,6 +41,8 @@ public class CreateAccountActivity extends AppCompatActivity {
     }
 
     public void createAccount(View view) {
+        Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -61,5 +63,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+
+        startActivity(intent);
     }
 }

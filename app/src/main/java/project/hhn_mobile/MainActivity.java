@@ -70,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+
+        startActivity(intent);
     }
 
     public void signUp(View view) {
