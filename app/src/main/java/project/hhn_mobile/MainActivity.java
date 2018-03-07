@@ -1,12 +1,17 @@
 package project.hhn_mobile;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -18,29 +23,57 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EMAIL_MESSAGE = "project.hhn_mobile.EMAIL";
     public static final String PASS_MESSAGE = "project.hhn_mobile.PASSWORD";
+    public static final String TAG = "TAG: ";
 
     private FirebaseAuth mAuth;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef = database.getReference("appointment/test");
 
+    EditText editText;
+    EditText editText2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        editText = findViewById(R.id.editText);
+        editText2 = findViewById(R.id.editText2);
 
         mAuth = FirebaseAuth.getInstance();
     }
 
     public void signIn(View view) {
         Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+
+        String email = editText.getText().toString();
+        String password = editText2.getText().toString();
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            //FirebaseUser user = mAuth.getCurrentUser();
+                            //updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                            //updateUI(null);
+                        }
+
+                        // ...
+                    }
+                });
     }
 
     public void signUp(View view) {
         Intent intent = new Intent(this, CreateAccountActivity.class);
-
-        EditText editText = findViewById(R.id.editText);
-        EditText editText2 = findViewById(R.id.editText2);
 
         String email = editText.getText().toString();
         String password = editText2.getText().toString();
@@ -56,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void testReadDatabase(View view) {
         myRef.addValueEventListener(new ValueEventListener() {
-            public static final String TAG = "TAG: ";
+            static final String TAG = "TAG: ";
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
