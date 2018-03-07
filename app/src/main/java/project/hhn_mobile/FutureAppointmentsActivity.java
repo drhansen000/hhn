@@ -1,5 +1,6 @@
 package project.hhn_mobile;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,11 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         System.out.println(user.getDisplayName());
+    }
+
+    public void createNewAppointment(View view) {
+        Intent intent = new Intent(this, CreateAppointmentActivity.class);
+        startActivity(intent);
     }
 
     public void testWriteDatabase(View view) {
