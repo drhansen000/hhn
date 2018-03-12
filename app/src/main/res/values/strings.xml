@@ -22,4 +22,6 @@
     <string name="service_name">Service Name</string>
     <string name="confirm_appointment">Confirm Appointment</string>
     <string name="time">Time</string>
+    <string name="textview">TextView</string>
+    <string name="log_out">Log Out</string>
 </resources>

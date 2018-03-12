@@ -23,6 +23,8 @@ public class CreateAccountActivity extends AppCompatActivity {
     private String password;
     public static final String TAG = "TAG: ";
 
+    EditText editText3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         email = intent.getStringExtra(MainActivity.EMAIL_MESSAGE);
         password = intent.getStringExtra(MainActivity.PASS_MESSAGE);
 
+        editText3 = findViewById(R.id.editText3);
         EditText editText9 = findViewById(R.id.editText9);
         EditText editText7 = findViewById(R.id.editText7);
 
@@ -43,6 +46,8 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     public void createAccount(View view) {
         final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+
+        final String userName = editText3.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

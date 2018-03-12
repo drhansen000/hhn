@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +40,17 @@ public class MainActivity extends AppCompatActivity {
         editText2 = findViewById(R.id.editText2);
 
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null) {
+            // Souts are for debug purposes right now
+            System.out.println("Name: " + user.getDisplayName());
+            System.out.println("Email: " + user.getEmail());
+            System.out.println("UID: " + user.getUid());
+
+            Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void signIn(View view) {

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,12 +27,18 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_future_appointments);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        System.out.println(user.getDisplayName());
+        TextView  textView11 = findViewById(R.id.textView11);
+        textView11.setText("Welcome " + currentUser.getEmail());
     }
 
     public void createNewAppointment(View view) {
         Intent intent = new Intent(this, CreateAppointmentActivity.class);
+        startActivity(intent);
+    }
+
+    public void logOut(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        FirebaseAuth.getInstance().signOut();
         startActivity(intent);
     }
 
