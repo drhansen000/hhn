@@ -21,7 +21,6 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     private String email;
     private String password;
-    public static final String TAG = "TAG: ";
 
     EditText editText3;
 
@@ -46,7 +45,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     public void createAccount(View view) {
         final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
-
+        final String TAG = "CreateAccount: ";
         final String userName = editText3.getText().toString();
 
         mAuth.createUserWithEmailAndPassword(email, password)

@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EMAIL_MESSAGE = "project.hhn_mobile.EMAIL";
     public static final String PASS_MESSAGE = "project.hhn_mobile.PASSWORD";
-    public static final String TAG = "TAG: ";
 
     private FirebaseAuth mAuth;
 
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void signIn(View view) {
         final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+        final String TAG = "SignIn: ";
 
         String email = editText.getText().toString();
         String password = editText2.getText().toString();
