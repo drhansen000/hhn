@@ -15,10 +15,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.List;
+
 public class FutureAppointmentsActivity extends AppCompatActivity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("appointment/test");
+    DatabaseReference myRef = database.getReference("appointment");
 
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
