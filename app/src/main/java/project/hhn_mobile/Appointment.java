@@ -8,17 +8,17 @@ public class Appointment {
 
     private String date;
     private String info;
-    private long service;
+    private String service;
     private String time;
 
     Appointment() {
         date = null;
         info = null;
-        service = 0;
+        service = null;
         time = null;
     }
 
-    Appointment(long service, String date, String time, String info) {
+    Appointment(String service, String date, String time, String info) {
         this.date = date;
         this.info = info;
         this.service = service;
@@ -43,11 +43,11 @@ public class Appointment {
     }
 
 
-    public long getService() {
+    public String getService() {
         return service;
     }
 
-    public void setService(long service) {
+    public void setService(String service) {
         this.service = service;
     }
 

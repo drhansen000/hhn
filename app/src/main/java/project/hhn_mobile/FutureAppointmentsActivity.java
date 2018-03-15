@@ -1,10 +1,13 @@
 package project.hhn_mobile;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,7 +27,13 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
     DatabaseReference myRef;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+    Context context;
+
     List<Appointment> appointments = new ArrayList<>();
+    List<String> a = new ArrayList<>();
+
+    ListView listView;
+    ArrayAdapter<String> appointmentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,9 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
         TextView  textView11 = findViewById(R.id.textView11);
         textView11.setText("Welcome " + currentUser.getEmail());
+        listView = findViewById(R.id.listView);
+
+        context = getApplicationContext();
 
         myRef = database.getReference();
         myRef.child("appointment/" + currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -41,12 +53,16 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     Appointment appointment = childSnapshot.getValue(Appointment.class);
                     appointments.add(appointment);
+                    a.add(appointment.getService() + ": " + appointment.getDate() + ", " + appointment.getTime());
 
-                    Log.d("Service", Long.toString(appointment.getService()));
+                    Log.d("Service", appointment.getService());
                     Log.d("Date", appointment.getDate());
                     Log.d("Time", appointment.getTime());
                     Log.d("Info", appointment.getInfo());
                 }
+
+                appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
+                listView.setAdapter(appointmentAdapter);
             }
 
             @Override
