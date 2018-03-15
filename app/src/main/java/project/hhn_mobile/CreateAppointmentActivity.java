@@ -28,6 +28,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
+    Context context;
 
     EditText editText6;
     Spinner spinner;
@@ -46,15 +47,14 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         spinner = findViewById(R.id.spinner);
         spinner.setOnItemSelectedListener(this);
 
-        final Context context = getApplicationContext();
+        context = getApplicationContext();
 
         myRef = database.getReference();
         myRef.child("service").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    Service service = new Service();
-                    service = childSnapshot.getValue(Service.class);
+                    Service service = childSnapshot.getValue(Service.class);
                     services.add(service);
                     nameList.add(service.getFullService());
 
@@ -64,7 +64,6 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                     Log.d("Service ID", Long.toString(service.getID()));
                     Log.d("List size", Long.toString(services.size()));
                 }
-                Log.d("Debug", "Out of the for loop");
 
                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, nameList);
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

@@ -15,14 +15,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FutureAppointmentsActivity extends AppCompatActivity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("appointment");
-
+    DatabaseReference myRef;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+    List<Appointment> appointments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,27 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
         TextView  textView11 = findViewById(R.id.textView11);
         textView11.setText("Welcome " + currentUser.getEmail());
+
+        myRef = database.getReference();
+        myRef.child("appointment/" + currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    Appointment appointment = childSnapshot.getValue(Appointment.class);
+                    appointments.add(appointment);
+
+                    Log.d("Service", Long.toString(appointment.getService()));
+                    Log.d("Date", appointment.getDate());
+                    Log.d("Time", appointment.getTime());
+                    Log.d("Info", appointment.getInfo());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("On Cancelled: ", "Something messed up");
+            }
+        });
     }
 
     public void createNewAppointment(View view) {
@@ -42,29 +65,5 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         FirebaseAuth.getInstance().signOut();
         startActivity(intent);
-    }
-
-    public void testWriteDatabase(View view) {
-        myRef.setValue("Working");
-    }
-
-    public void testReadDatabase(View view) {
-        myRef.addValueEventListener(new ValueEventListener() {
-            static final String TAG = "TAG: ";
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
     }
 }
