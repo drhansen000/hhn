@@ -1,6 +1,7 @@
 package project.hhn_mobile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,18 +33,29 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
     DatabaseReference myRef;
     Context context;
 
+    EditText editText4;
+    EditText editText11;
     EditText editText6;
     Spinner spinner;
-    String description = "";
 
     List<Service> services = new ArrayList<>();
     List<String> nameList = new ArrayList<>();
+    int appointmentListSize = 0;
+
+    String description = "";
+    String service = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_appointment);
 
+        Intent intent = getIntent();
+        appointmentListSize = intent.getIntExtra(FutureAppointmentsActivity.LIST_SIZE_MESSAGE, 0);
+        Log.d("Appointment list size", Long.toString(appointmentListSize));
+
+        editText4 = findViewById(R.id.editText4);
+        editText11 = findViewById(R.id.editText11);
         editText6 = findViewById(R.id.editText6);
 
         spinner = findViewById(R.id.spinner);
@@ -49,6 +63,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         context = getApplicationContext();
 
+        // Populate the spinner with the service options from the database.
         myRef = database.getReference();
         myRef.child("service").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -114,6 +129,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         // On selecting a spinner item
         String item = adapterView.getItemAtPosition(i).toString();
+        service = item;
 
         // Showing selected spinner item
         Toast.makeText(adapterView.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
@@ -122,5 +138,22 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    public void confirmAppointment(View view) {
+        String size = Integer.toString(appointmentListSize);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference myServiceRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/service");
+        DatabaseReference myDateRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/date");
+        DatabaseReference myTimeRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/time");
+        DatabaseReference myInfoRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/info");
+
+        myServiceRef.setValue(service);
+        myDateRef.setValue(editText4.getText().toString());
+        myTimeRef.setValue(editText11.getText().toString());
+        myInfoRef.setValue(editText6.getText().toString());
+
+        Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+        startActivity(intent);
     }
 }

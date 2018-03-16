@@ -6,24 +6,36 @@ package project.hhn_mobile;
 
 public class Appointment {
 
+    private long cancelled;
     private String date;
     private String info;
     private String service;
     private String time;
 
     Appointment() {
+        cancelled = 0;
         date = null;
         info = null;
         service = null;
         time = null;
     }
 
-    Appointment(String service, String date, String time, String info) {
+    Appointment(long cancelled, String service, String date, String time, String info) {
+        this.cancelled = cancelled;
         this.date = date;
         this.info = info;
         this.service = service;
         this.time = time;
     }
+
+    public long getCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(long cancelled) {
+        this.cancelled = cancelled;
+    }
+
 
     public String getDate() {
         return date;

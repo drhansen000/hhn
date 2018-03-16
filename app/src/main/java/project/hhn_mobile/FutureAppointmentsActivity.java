@@ -23,6 +23,8 @@ import java.util.List;
 
 public class FutureAppointmentsActivity extends AppCompatActivity {
 
+    public static final String LIST_SIZE_MESSAGE = "project.hhn_mobile.LIST_SIZE";
+
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -53,16 +55,19 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     Appointment appointment = childSnapshot.getValue(Appointment.class);
                     appointments.add(appointment);
-                    a.add(appointment.getService() + ": " + appointment.getDate() + ", " + appointment.getTime());
+                    a.add(appointment.getService() + ": " + appointment.getDate() + ", "
+                            + appointment.getTime() + ", " + appointment.getInfo());
 
                     Log.d("Service", appointment.getService());
                     Log.d("Date", appointment.getDate());
                     Log.d("Time", appointment.getTime());
                     Log.d("Info", appointment.getInfo());
+                    Log.d("Cancelled", Long.toString(appointment.getCancelled()));
                 }
 
                 appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
                 listView.setAdapter(appointmentAdapter);
+                Log.d("List size", Long.toString(appointments.size()));
             }
 
             @Override
@@ -74,6 +79,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
     public void createNewAppointment(View view) {
         Intent intent = new Intent(this, CreateAppointmentActivity.class);
+        intent.putExtra(LIST_SIZE_MESSAGE, appointments.size());
         startActivity(intent);
     }
 
