@@ -4,6 +4,11 @@ package project.hhn_mobile;
  * Created by joshua on 3/14/18.
  */
 
+/***********************************************************************************
+ This class was made so that the list view in the FutureAppointmentActivity
+ could be populated with the correct information from the user's appointments.
+ ***********************************************************************************/
+
 public class Appointment {
 
     private long cancelled;

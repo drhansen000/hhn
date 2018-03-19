@@ -4,6 +4,11 @@ package project.hhn_mobile;
  * Created by joshua on 3/12/18.
  */
 
+/*****************************************************************************************
+This class was made so that the dropdown spinner in the CreateAppointmentActivity
+could be populated with the correct information from the services branch of the database.
+ *****************************************************************************************/
+
 public class Service {
 
     private long cost;

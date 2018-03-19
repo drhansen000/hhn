@@ -42,22 +42,28 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_future_appointments);
 
+        // Get the user email and display it so that we can tell who is logged in.
         TextView  textView11 = findViewById(R.id.textView11);
         textView11.setText("Welcome " + currentUser.getEmail());
-        listView = findViewById(R.id.listView);
 
+        listView = findViewById(R.id.listView);
         context = getApplicationContext();
 
+        // A reference is made under the appointment branch in the database to the user's UID.
+        // All of the user's appointments are under their UID under the appointment branch.
         myRef = database.getReference();
         myRef.child("appointment/" + currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    // Reading from the database can put nodes of the tree into objects.
+                    // Each appointment is put in an Appointment object and then added to the correct arrays.
                     Appointment appointment = childSnapshot.getValue(Appointment.class);
                     appointments.add(appointment);
                     a.add(appointment.getService() + ": " + appointment.getDate() + ", "
                             + appointment.getTime() + ", " + appointment.getInfo());
 
+                    // Debug logs to make sure that everything in the database is getting read correctly.
                     Log.d("Service", appointment.getService());
                     Log.d("Date", appointment.getDate());
                     Log.d("Time", appointment.getTime());
@@ -65,6 +71,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     Log.d("Cancelled", Long.toString(appointment.getCancelled()));
                 }
 
+                // After the appointments are read and stored properly, it is connected to the list view adapter to display it.
                 appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
                 listView.setAdapter(appointmentAdapter);
                 Log.d("List size", Long.toString(appointments.size()));
@@ -72,18 +79,21 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                // Debug log in case something went wrong.
                 Log.d("On Cancelled: ", "Something messed up");
             }
         });
     }
 
     public void createNewAppointment(View view) {
+        // Go to the CreateAppointmentActivity.
         Intent intent = new Intent(this, CreateAppointmentActivity.class);
         intent.putExtra(LIST_SIZE_MESSAGE, appointments.size());
         startActivity(intent);
     }
 
     public void logOut(View view) {
+        // Allows a user to log out and is sent back to the MainActivity.
         Intent intent = new Intent(this, MainActivity.class);
         FirebaseAuth.getInstance().signOut();
         startActivity(intent);

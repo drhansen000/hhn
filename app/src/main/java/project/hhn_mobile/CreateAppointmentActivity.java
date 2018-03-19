@@ -50,6 +50,8 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_appointment);
 
+        // Get the list size that was sent from the FutureAppointmentActivity so that we know the number of
+        //   appointments. This allows us to create an appointment in the next available spot in the database.
         Intent intent = getIntent();
         appointmentListSize = intent.getIntExtra(FutureAppointmentsActivity.LIST_SIZE_MESSAGE, 0);
         Log.d("Appointment list size", Long.toString(appointmentListSize));
@@ -69,10 +71,12 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    // Service nodes in the database are read as objects into a Service object and loaded into the correct arrays.
                     Service service = childSnapshot.getValue(Service.class);
                     services.add(service);
                     nameList.add(service.getFullService());
 
+                    // Debug logs to make sure that everything is getting read from the database correctly.
                     Log.d("Service Name", service.getService());
                     Log.d("Service Cost", Long.toString(service.getCost()));
                     Log.d("Service Duration", Long.toString(service.getDuration()));
@@ -80,6 +84,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                     Log.d("List size", Long.toString(services.size()));
                 }
 
+                // Connect the service name list array to the spinner so that the spinner is populated with the correct info.
                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, nameList);
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(dataAdapter);
@@ -87,6 +92,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+                // Debug log in case something messed up while reading the database.
                 Log.d("On Cancelled: ", "Something messed up");
             }
         });
@@ -100,12 +106,12 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         description = editText6.getText().toString();
 
-        //look at the URL below to learn more about the following variable instantiation
+        // Look at the URL below to learn more about the following variable instantiation
         // https://developer.android.com/reference/android/preference/PreferenceManager.html
         SharedPreferences.Editor preferencesEditor =
                 PreferenceManager.getDefaultSharedPreferences(context).edit();
 
-        //This adds a string attached to a key that I create
+        // This adds a string attached to a key that I create
         preferencesEditor.putString("DESCRIPTION", description);
         preferencesEditor.apply(); //this applies the changes to the preferences
     }
@@ -113,12 +119,12 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
     @Override
     protected void onResume() {
         super.onResume();
-        //create the context (it's the activity that we're currently in)
+        // Create the context (it's the activity that we're currently in)
         Context context = this;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        //store the retrieved data into strings. If there is no data, use the default values
+        // Store the retrieved data into strings. If there is no data, use the default values
         // passed in the second parameter
         String storedDescription = prefs.getString("DESCRIPTION", "Description");
 
@@ -137,10 +143,11 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
+        // Nothing is done here, don't really know what should go here.
     }
 
     public void confirmAppointment(View view) {
+        // References are made to each leaf in an appointment node under the current user's UID.
         String size = Integer.toString(appointmentListSize);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference myServiceRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/service");
@@ -148,11 +155,13 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         DatabaseReference myTimeRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/time");
         DatabaseReference myInfoRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/info");
 
+        // Each piece of data is written to the database, it has to be done separately to my knowledge.
         myServiceRef.setValue(service);
         myDateRef.setValue(editText4.getText().toString());
         myTimeRef.setValue(editText11.getText().toString());
         myInfoRef.setValue(editText6.getText().toString());
 
+        // After everything is written to the databse the user is sent back to the FutureAppointmentActivity.
         Intent intent = new Intent(this, FutureAppointmentsActivity.class);
         startActivity(intent);
     }

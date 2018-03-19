@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
+    // These are two intent messages used to send the email and password strings to the CreateAccountActivity.
     public static final String EMAIL_MESSAGE = "project.hhn_mobile.EMAIL";
     public static final String PASS_MESSAGE = "project.hhn_mobile.PASSWORD";
 
@@ -35,12 +36,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // EditTexts for the email and password to use in the signIn and signUp functions.
         editText = findViewById(R.id.editText);
         editText2 = findViewById(R.id.editText2);
 
+        // Get an instance of the currentUser
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
+        // If the current user is not null (i.e. someone has logged in previously) then immediately log them in.
         if (user != null) {
             // Souts are for debug purposes right now
             System.out.println("Name: " + user.getDisplayName());
@@ -56,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
         final String TAG = "SignIn: ";
 
+        // Prepare email and password strings to attempt to log in via Firebase.
         String email = editText.getText().toString();
         String password = editText2.getText().toString();
 
@@ -64,20 +69,15 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+                            // Sign in success, send an intent to the FutureAppointmentActivity
                             Log.d(TAG, "signInWithEmail:success");
-                            //FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(MainActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
-
-                        // ...
                     }
                 });
     }
@@ -85,9 +85,11 @@ public class MainActivity extends AppCompatActivity {
     public void signUp(View view) {
         Intent intent = new Intent(this, CreateAccountActivity.class);
 
+        // If a user has entered an email and password then prepare to send it to the CreateAccountActivity.
         String email = editText.getText().toString();
         String password = editText2.getText().toString();
 
+        // Send email and password entered to fill the email and password boxes in the next activity.
         intent.putExtra(EMAIL_MESSAGE, email);
         intent.putExtra(PASS_MESSAGE, password);
         startActivity(intent);
