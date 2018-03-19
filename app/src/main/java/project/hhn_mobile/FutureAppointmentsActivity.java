@@ -60,8 +60,8 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     // Each appointment is put in an Appointment object and then added to the correct arrays.
                     Appointment appointment = childSnapshot.getValue(Appointment.class);
                     appointments.add(appointment);
-                    a.add(appointment.getService() + ": " + appointment.getDate() + ", "
-                            + appointment.getTime() + ", " + appointment.getInfo());
+                    a.add(appointment.getService() + "\nDate : " + appointment.getDate() + " Time: "
+                            + appointment.getTime() + "\nAdditional Info:\n " + appointment.getInfo());
 
                     // Debug logs to make sure that everything in the database is getting read correctly.
                     Log.d("Service", appointment.getService());
@@ -70,7 +70,6 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     Log.d("Info", appointment.getInfo());
                     Log.d("Cancelled", Long.toString(appointment.getCancelled()));
                 }
-
                 // After the appointments are read and stored properly, it is connected to the list view adapter to display it.
                 appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
                 listView.setAdapter(appointmentAdapter);
