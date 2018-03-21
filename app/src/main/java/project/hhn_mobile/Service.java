@@ -1,14 +1,12 @@
 package project.hhn_mobile;
 
 /**
- * Created by joshua on 3/12/18.
+ * Created by jay on 3/12/18.
+ * This class was made so that the dropdown spinner in the CreateAppointmentActivity
+ * could be populated with the correct information from the services branch of the database.
+ * @author jay
+ * @version 1.0
  */
-
-/*****************************************************************************************
-This class was made so that the dropdown spinner in the CreateAppointmentActivity
-could be populated with the correct information from the services branch of the database.
- *****************************************************************************************/
-
 public class Service {
 
     private long cost;
@@ -65,12 +63,16 @@ public class Service {
         this.service = serviceName;
     }
 
-
+    /**
+     * The purpose of this function is to take each variable of a service object
+     * and concatenate it into a single string.
+     * @return full a string that contains the full service.
+     */
     public String getFullService() {
         String s = service;
         String d = Long.toString(duration);
         String c = Long.toString(cost);
-        String full = s + " : " + d + " : " + c;
+        String full = s + " for " + d + "min at $" + c;
         return full;
     }
 }
