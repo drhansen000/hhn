@@ -161,7 +161,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         myTimeRef.setValue(editText11.getText().toString());
         myInfoRef.setValue(editText6.getText().toString());
 
-        // After everything is written to the databse the user is sent back to the FutureAppointmentActivity.
+        // After everything is written to the database the user is sent back to the FutureAppointmentActivity.
         Intent intent = new Intent(this, FutureAppointmentsActivity.class);
         startActivity(intent);
     }
