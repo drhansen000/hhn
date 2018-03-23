@@ -66,7 +66,7 @@ public class Service {
     /**
      * The purpose of this function is to take each variable of a service object
      * and concatenate it into a single string.
-     * @return full a string that contains the full service.
+     * @return full, a string that contains the full service.
      */
     public String getFullService() {
         String s = service;
