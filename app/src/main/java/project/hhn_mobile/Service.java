@@ -72,7 +72,7 @@ public class Service {
         String s = service;
         String d = Long.toString(duration);
         String c = Long.toString(cost);
-        String full = s + " for " + d + "min at $" + c;
+        String full = s + " for " + d + " min at $" + c;
         return full;
     }
 }

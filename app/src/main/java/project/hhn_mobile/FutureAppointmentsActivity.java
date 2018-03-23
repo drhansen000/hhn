@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -74,6 +76,17 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
                 listView.setAdapter(appointmentAdapter);
                 Log.d("List size", Long.toString(appointments.size()));
+
+                listView.setClickable(true);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                        Object o = listView.getItemAtPosition(position);
+                        String str=(String)o;//As you are using Default String Adapter
+                        Toast.makeText(getApplicationContext(),str,Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
