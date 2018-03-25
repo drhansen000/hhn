@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -87,12 +88,31 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                         Object o = listView.getItemAtPosition(position);
                         String str = (String) o; //As you are using Default String Adapter
+                        final String date = "2018-09-10";
                         AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
                         builder.setMessage(str)
                                 .setTitle("Change Appointment");
                         builder.setPositiveButton("Cancel Appointment", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button
+                                Log.d("Positive", "The positive button was clicked");
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                Query appointmentQuery = ref.child("appointment/").equalTo(date);
+                                Log.d("Progress", "Date: " + date);
+                                appointmentQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot appointmentSnapshot: dataSnapshot.getChildren()) {
+                                            appointmentSnapshot.getRef().removeValue();
+                                            Log.d("Removed", "Removed appointment");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Log.e("On Cancelled", "Something's wrong", databaseError.toException());
+                                    }
+                                });
                             }
                         });
                         builder.setNegativeButton("Nevermind", new DialogInterface.OnClickListener() {
