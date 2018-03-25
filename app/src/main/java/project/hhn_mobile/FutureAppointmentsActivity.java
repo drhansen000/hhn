@@ -1,7 +1,10 @@
 package project.hhn_mobile;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -83,8 +86,14 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                         Object o = listView.getItemAtPosition(position);
-                        String str=(String)o;//As you are using Default String Adapter
-                        Toast.makeText(getApplicationContext(),str,Toast.LENGTH_SHORT).show();
+                        String str = (String) o; //As you are using Default String Adapter
+                        AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
+                        builder.setMessage(str)
+                                .setTitle("Change Appointment");
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+
                     }
                 });
             }
