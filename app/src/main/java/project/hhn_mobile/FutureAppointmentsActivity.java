@@ -85,10 +85,9 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                     @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                    public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
                         Object o = listView.getItemAtPosition(position);
                         String str = (String) o; //As you are using Default String Adapter
-                        final String date = "2018-09-10";
                         AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
                         builder.setMessage(str)
                                 .setTitle("Change Appointment");
@@ -97,8 +96,10 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                                 // User clicked OK button
                                 Log.d("Positive", "The positive button was clicked");
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                                Query appointmentQuery = ref.child("appointment/").equalTo(date);
-                                Log.d("Progress", "Date: " + date);
+                                Query appointmentQuery = ref.child("appointment/" + currentUser.getUid() + '/' + position);
+                                Log.d("Progress", "Position: " + position);
+                                appointmentQuery.getRef().removeValue();
+                                Log.d("Removed", "Removed appointment at position " + position);
                                 appointmentQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
