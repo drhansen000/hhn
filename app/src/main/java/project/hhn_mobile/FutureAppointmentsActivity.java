@@ -90,10 +90,21 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
                         builder.setMessage(str)
                                 .setTitle("Change Appointment");
+                        builder.setPositiveButton("Cancel Appointment", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User clicked OK button
+                            }
+                        });
+                        builder.setNegativeButton("Nevermind", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // User cancelled the dialog
+                            }
+                        });
+
+
 
                         AlertDialog dialog = builder.create();
                         dialog.show();
-
                     }
                 });
             }
