@@ -55,6 +55,13 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         context = getApplicationContext();
 
+        //create the ListView, which then connects an alert to each ListView item
+        createListView();
+
+
+    }
+
+    public void createListView() {
         // A reference is made under the appointment branch in the database to the user's UID.
         // All of the user's appointments are under their UID under the appointment branch.
         myRef = database.getReference();
@@ -81,59 +88,46 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 listView.setAdapter(appointmentAdapter);
                 Log.d("List size", Long.toString(appointments.size()));
 
-                listView.setClickable(true);
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                    @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
-                        Object o = listView.getItemAtPosition(position);
-                        String str = (String) o; //As you are using Default String Adapter
-                        AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
-                        builder.setMessage(str)
-                                .setTitle("Change Appointment");
-                        builder.setPositiveButton("Cancel Appointment", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User clicked OK button
-                                Log.d("Positive", "The positive button was clicked");
-                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                                Query appointmentQuery = ref.child("appointment/" + currentUser.getUid() + '/' + position);
-                                Log.d("Progress", "Position: " + position);
-                                appointmentQuery.getRef().removeValue();
-                                Log.d("Removed", "Removed appointment at position " + position);
-                                appointmentQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot appointmentSnapshot: dataSnapshot.getChildren()) {
-                                            appointmentSnapshot.getRef().removeValue();
-                                            Log.d("Removed", "Removed appointment");
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-                                        Log.e("On Cancelled", "Something's wrong", databaseError.toException());
-                                    }
-                                });
-                            }
-                        });
-                        builder.setNegativeButton("Nevermind", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
-                            }
-                        });
-
-
-
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-                });
+                //attach an alert dialog to each listView item
+                cancelEditAppointment();
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Debug log in case something went wrong.
                 Log.d("On Cancelled: ", "Something messed up");
+            }
+        });
+    }
+
+    public void cancelEditAppointment() {
+        listView.setClickable(true);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
+                Object o = listView.getItemAtPosition(position);
+                String str = (String) o; //As you are using Default String Adapter
+                AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
+                builder.setMessage(str)
+                        .setTitle("Change Appointment");
+                builder.setPositiveButton("Cancel Appointment", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        Log.d("Positive", "The positive button was clicked");
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                        Query appointmentQuery = ref.child("appointment/" + currentUser.getUid() + '/' + position);
+                        Log.d("Progress", "Position: " + position);
+                        appointmentQuery.getRef().removeValue();
+                        Log.d("Removed", "Removed appointment at position " + position);
+                    }
+                });
+                builder.setNegativeButton("Nevermind", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
