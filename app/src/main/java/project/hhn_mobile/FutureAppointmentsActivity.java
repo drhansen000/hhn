@@ -57,8 +57,6 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
         //create the ListView, which then connects an alert to each ListView item
         createListView();
-
-
     }
 
     public void createListView() {
@@ -81,7 +79,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     Log.d("Date", appointment.getDate());
                     Log.d("Time", appointment.getTime());
                     Log.d("Info", appointment.getInfo());
-                    Log.d("Cancelled", Long.toString(appointment.getCancelled()));
+                    Log.d("Cancelled", appointment.getCancelled());
                 }
                 // After the appointments are read and stored properly, it is connected to the list view adapter to display it.
                 appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
@@ -110,17 +108,18 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
                 builder.setMessage(str)
                         .setTitle("Change Appointment");
+
                 builder.setPositiveButton("Cancel Appointment", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
                         Log.d("Positive", "The positive button was clicked");
-                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                        Query appointmentQuery = ref.child("appointment/" + currentUser.getUid() + '/' + position);
                         Log.d("Progress", "Position: " + position);
-                        appointmentQuery.getRef().removeValue();
                         Log.d("Removed", "Removed appointment at position " + position);
+                        DatabaseReference myChangeRef = database.getReference("appointment/" + currentUser.getUid() + "/" + position + "/cancelled");
+                        myChangeRef.setValue("Yes");
                     }
                 });
+
                 builder.setNegativeButton("Nevermind", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog

@@ -9,21 +9,21 @@ package project.hhn_mobile;
  */
 public class Appointment {
 
-    private long cancelled;
+    private String cancelled;
     private String date;
     private String info;
     private String service;
     private String time;
 
     Appointment() {
-        cancelled = 0;
+        cancelled = null;
         date = null;
         info = null;
         service = null;
         time = null;
     }
 
-    Appointment(long cancelled, String service, String date, String time, String info) {
+    Appointment(String cancelled, String service, String date, String time, String info) {
         this.cancelled = cancelled;
         this.date = date;
         this.info = info;
@@ -31,11 +31,11 @@ public class Appointment {
         this.time = time;
     }
 
-    public long getCancelled() {
+    public String getCancelled() {
         return cancelled;
     }
 
-    public void setCancelled(long cancelled) {
+    public void setCancelled(String cancelled) {
         this.cancelled = cancelled;
     }
 

@@ -154,12 +154,14 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         DatabaseReference myDateRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/date");
         DatabaseReference myTimeRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/time");
         DatabaseReference myInfoRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/info");
+        DatabaseReference myCancelRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/cancelled");
 
         // Each piece of data is written to the database, it has to be done separately to my knowledge.
         myServiceRef.setValue(service);
         myDateRef.setValue(editText4.getText().toString());
         myTimeRef.setValue(editText11.getText().toString());
         myInfoRef.setValue(editText6.getText().toString());
+        myCancelRef.setValue("No");
 
         // After everything is written to the database the user is sent back to the FutureAppointmentActivity.
         Intent intent = new Intent(this, FutureAppointmentsActivity.class);
