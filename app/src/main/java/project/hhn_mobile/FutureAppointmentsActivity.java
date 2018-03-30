@@ -24,7 +24,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FutureAppointmentsActivity extends AppCompatActivity {
@@ -66,20 +68,31 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
         myRef.child("appointment/" + currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     // Reading from the database can put nodes of the tree into objects.
                     // Each appointment is put in an Appointment object and then added to the correct arrays.
                     Appointment appointment = childSnapshot.getValue(Appointment.class);
-                    appointments.add(appointment);
-                    a.add(appointment.getService() + "\nDate : " + appointment.getDate() + " Time: "
-                            + appointment.getTime() + "\nAdditional Info:\n " + appointment.getInfo());
+                    if (appointment.getCancelled().equals("No")) {
+                        Log.d("If fired", appointment.getCancelled().getClass().getName());
+                    } else {
+                        Log.d("else Fired", appointment.getCancelled().getClass().getName());
+                    }
+                    Log.d("Today's date", date);
 
-                    // Debug logs to make sure that everything in the database is getting read correctly.
-                    Log.d("Service", appointment.getService());
-                    Log.d("Date", appointment.getDate());
-                    Log.d("Time", appointment.getTime());
-                    Log.d("Info", appointment.getInfo());
-                    Log.d("Cancelled", appointment.getCancelled());
+                    //check if the appointment's cancelled or in before the current date
+                    if (appointment.getCancelled().equals("No") && appointment.getDate().compareTo(date) >= 0) {
+                        appointments.add(appointment);
+                        a.add(appointment.getService() + "\nDate : " + appointment.getDate() + " Time: "
+                                + appointment.getTime() + "\nAdditional Info:\n " + appointment.getInfo());
+
+                        // Debug logs to make sure that everything in the database is getting read correctly.
+                        Log.d("Service", appointment.getService());
+                        Log.d("Date", appointment.getDate());
+                        Log.d("Time", appointment.getTime());
+                        Log.d("Info", appointment.getInfo());
+                        Log.d("Cancelled", appointment.getCancelled());
+                    }
                 }
                 // After the appointments are read and stored properly, it is connected to the list view adapter to display it.
                 appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
