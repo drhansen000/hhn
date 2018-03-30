@@ -1,8 +1,12 @@
 package project.hhn_mobile;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,8 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,18 +30,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class CreateAppointmentActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     Context context;
+    private DatePickerDialog.OnDateSetListener onDateSetListener;
+    private TimePickerDialog.OnTimeSetListener onTimeSetListener;
 
-    EditText editText4;
-    EditText editText11;
+    private TextView displayDate;
+    private TextView displayTime;
     EditText editText6;
     Spinner spinner;
 
@@ -50,14 +57,71 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_appointment);
 
+        displayTime = (TextView) findViewById(R.id.timeView);
+        displayTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar c = Calendar.getInstance();
+                int hour = c.get(Calendar.HOUR_OF_DAY);
+                int minute = c.get(Calendar.MINUTE);
+                TimePickerDialog timeDialog = new TimePickerDialog(
+                        CreateAppointmentActivity.this,
+                        onTimeSetListener,
+                        hour, minute,
+                        false);
+                timeDialog.show();
+            }
+        });
+        onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                String appTime = hour + ":" + minute;
+                displayTime.setText(appTime);
+            }
+        };
+
+        displayDate = findViewById(R.id.dateView);
+        displayDate.setOnClickListener(new View.OnClickListener () {
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                int year     = cal.get(Calendar.YEAR);
+                int month    = cal.get(Calendar.MONTH);
+                int day      = cal.get(Calendar.DAY_OF_MONTH);
+
+                //set up DatePickerDialog context, theme, and information
+                DatePickerDialog dateDialog = new DatePickerDialog(
+                        CreateAppointmentActivity.this,
+                        android.R.style.Theme_Holo_Dialog_MinWidth,
+                        onDateSetListener,
+                        year, month, day);
+
+                //make background transparent
+                dateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+                dateDialog.show();
+            }
+        });
+        onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                //because they count January as 0
+                month += 1;
+
+                //set textview to date selected
+                String date = year + "-" + month + "-" + day;
+                displayDate.setText(date);
+            }
+        };
+
         // Get the list size that was sent from the FutureAppointmentActivity so that we know the number of
         //   appointments. This allows us to create an appointment in the next available spot in the database.
         Intent intent = getIntent();
         appointmentListSize = intent.getIntExtra(FutureAppointmentsActivity.LIST_SIZE_MESSAGE, 0);
         Log.d("Appointment list size", Long.toString(appointmentListSize));
 
-        editText4 = findViewById(R.id.editText4);
-        editText11 = findViewById(R.id.editText11);
+//        datePicker = findViewById(R.id.datePicker);
+//        textClock = findViewById(R.id.textClock);
         editText6 = findViewById(R.id.editText6);
 
         spinner = findViewById(R.id.spinner);
@@ -158,8 +222,8 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         // Each piece of data is written to the database, it has to be done separately to my knowledge.
         myServiceRef.setValue(service);
-        myDateRef.setValue(editText4.getText().toString());
-        myTimeRef.setValue(editText11.getText().toString());
+        myDateRef.setValue(displayDate.getText().toString());
+        myTimeRef.setValue(displayTime.getText().toString());
         myInfoRef.setValue(editText6.getText().toString());
         myCancelRef.setValue("No");
 
