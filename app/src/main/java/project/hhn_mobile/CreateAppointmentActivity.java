@@ -42,12 +42,13 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
     private TextView displayDate;
     private TextView displayTime;
-    EditText editText6;
-    Spinner spinner;
+    private TextView textView5;
+    private EditText editText6;
+    private Spinner spinner;
 
     List<Service> services = new ArrayList<>();
     List<String> nameList = new ArrayList<>();
-    int appointmentListSize = 0;
+    int appointmentPosition = 0;
 
     String description = "";
     String service = null;
@@ -56,6 +57,8 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_appointment);
+
+        textView5 = findViewById(R.id.textView5);
 
         displayTime = (TextView) findViewById(R.id.timeView);
         displayTime.setOnClickListener(new View.OnClickListener() {
@@ -117,8 +120,17 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         // Get the list size that was sent from the FutureAppointmentActivity so that we know the number of
         //   appointments. This allows us to create an appointment in the next available spot in the database.
         Intent intent = getIntent();
-        appointmentListSize = intent.getIntExtra(FutureAppointmentsActivity.LIST_SIZE_MESSAGE, 0);
-        Log.d("Appointment list size", Long.toString(appointmentListSize));
+        int n = intent.getIntExtra(FutureAppointmentsActivity.FUNCTION_NUMBER, 0);
+        Log.d("Function Number", Long.toString(n));
+        if (n == 1) {
+            appointmentPosition = intent.getIntExtra(FutureAppointmentsActivity.LIST_SIZE_MESSAGE, 0);
+            Log.d("Appointment list size", Long.toString(appointmentPosition));
+            textView5.setText("Create an Appointment");
+        } else {
+            appointmentPosition = intent.getIntExtra(FutureAppointmentsActivity.APPOINTMENT_POSITION, 0);
+            Log.d("Appointment Position", Long.toString(appointmentPosition));
+            textView5.setText("Edit Appointment");
+        }
 
 //        datePicker = findViewById(R.id.datePicker);
 //        textClock = findViewById(R.id.textClock);
@@ -212,7 +224,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
     public void confirmAppointment(View view) {
         // References are made to each leaf in an appointment node under the current user's UID.
-        String size = Integer.toString(appointmentListSize);
+        String size = Integer.toString(appointmentPosition);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference myServiceRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/service");
         DatabaseReference myDateRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/date");

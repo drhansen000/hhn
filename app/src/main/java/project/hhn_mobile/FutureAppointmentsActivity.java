@@ -32,6 +32,8 @@ import java.util.List;
 public class FutureAppointmentsActivity extends AppCompatActivity {
 
     public static final String LIST_SIZE_MESSAGE = "project.hhn_mobile.LIST_SIZE";
+    public static final String APPOINTMENT_POSITION = "project.hhn_mobile.APPOINTMENT";
+    public static final String FUNCTION_NUMBER = "project.hhn_mobile.FUNCTION_NUMBER";
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
@@ -133,7 +135,13 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     }
                 });
 
-                builder.setNegativeButton("Nevermind", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Edit Appointment", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        editAppointment(position);
+                    }
+                });
+
+                builder.setNeutralButton("Nevermind", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
                     }
@@ -148,6 +156,14 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
         // Go to the CreateAppointmentActivity.
         Intent intent = new Intent(this, CreateAppointmentActivity.class);
         intent.putExtra(LIST_SIZE_MESSAGE, appointments.size());
+        intent.putExtra(FUNCTION_NUMBER, 1);
+        startActivity(intent);
+    }
+
+    public void editAppointment(int position) {
+        Intent intent = new Intent(this, CreateAppointmentActivity.class);
+        intent.putExtra(APPOINTMENT_POSITION, position);
+        intent.putExtra(FUNCTION_NUMBER, 2);
         startActivity(intent);
     }
 
