@@ -78,7 +78,15 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                String appTime = hour + ":" + minute;
+                String sMinute;
+
+                if (minute < 10) {
+                    sMinute = "0" + minute;
+                } else {
+                    sMinute = "" + minute;
+                }
+
+                String appTime = hour + ":" + sMinute;
                 displayTime.setText(appTime);
             }
         };
@@ -95,12 +103,8 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                 //set up DatePickerDialog context, theme, and information
                 DatePickerDialog dateDialog = new DatePickerDialog(
                         CreateAppointmentActivity.this,
-                        android.R.style.Theme_Holo_Dialog_MinWidth,
                         onDateSetListener,
                         year, month, day);
-
-                //make background transparent
-                dateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
                 dateDialog.show();
             }
@@ -108,11 +112,24 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         onDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                String sMonth;
+                String sDay;
                 //because they count January as 0
                 month += 1;
 
+                if (month < 10) {
+                    sMonth = "0" + month;
+                } else {
+                    sMonth = "" + month;
+                }
+                if (day < 10) {
+                    sDay = "0" + day;
+                } else {
+                    sDay = "" + day;
+                }
+
                 //set textview to date selected
-                String date = year + "-" + month + "-" + day;
+                String date = year + "-" + sMonth + "-" + sDay;
                 displayDate.setText(date);
             }
         };
