@@ -117,6 +117,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                 //because they count January as 0
                 month += 1;
 
+                //add a 0 to the string if it's less than ten
                 if (month < 10) {
                     sMonth = "0" + month;
                 } else {
@@ -149,8 +150,6 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
             textView5.setText("Edit Appointment");
         }
 
-//        datePicker = findViewById(R.id.datePicker);
-//        textClock = findViewById(R.id.textClock);
         editText6 = findViewById(R.id.editText6);
 
         spinner = findViewById(R.id.spinner);

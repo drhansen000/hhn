@@ -82,7 +82,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     }
                     Log.d("Today's date", date);
 
-                    //check if the appointment's cancelled or in before the current date
+                    //check if the appointment's cancelled or scheduled before the current date
                     if (appointment.getCancelled().equals("No") && appointment.getDate().compareTo(date) >= 0) {
                         appointments.add(appointment);
                         a.add(appointment.getService() + "\nDate : " + appointment.getDate() + " Time: "
@@ -132,12 +132,20 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                         Log.d("Removed", "Removed appointment at position " + position);
                         DatabaseReference myChangeRef = database.getReference("appointment/" + currentUser.getUid() + "/" + position + "/cancelled");
                         myChangeRef.setValue("Yes");
+
+                        //refresh the activity
+                        finish();
+                        startActivity(getIntent());
                     }
                 });
 
                 builder.setNegativeButton("Edit Appointment", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         editAppointment(position);
+
+                        //refresh the activity
+                        finish();
+                        startActivity(getIntent());
                     }
                 });
 
