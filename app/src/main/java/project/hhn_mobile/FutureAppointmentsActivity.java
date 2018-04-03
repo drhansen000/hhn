@@ -82,10 +82,11 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     }
                     Log.d("Today's date", date);
 
+                    appointments.add(appointment);
+
                     //check if the appointment's cancelled or scheduled before the current date
                     if (appointment.getCancelled().equals("No") && appointment.getDate().compareTo(date) >= 0) {
-                        appointments.add(appointment);
-                        a.add(appointment.getService() + "\nDate : " + appointment.getDate() + " Time: "
+                        a.add(appointment.getService() + "\nDate: " + appointment.getDate() + " Time: "
                                 + appointment.getTime() + "\nAdditional Info:\n " + appointment.getInfo());
 
                         // Debug logs to make sure that everything in the database is getting read correctly.
@@ -119,6 +120,8 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
                 Object o = listView.getItemAtPosition(position);
+//                Appointment date = (Appointment) o;
+//                Log.d("Appointment Date", date.getDate());
                 String str = (String) o; //As you are using Default String Adapter
                 AlertDialog.Builder builder = new AlertDialog.Builder(FutureAppointmentsActivity.this);
                 builder.setMessage(str)
