@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,8 +42,13 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
     Context context;
 
-    List<Appointment> appointments = new ArrayList<>();
     List<String> a = new ArrayList<>();
+
+    //get the user's appointment array size
+    Integer dbLength = 0;
+
+    //To get the date at the equivalent ListView position
+    List<String> appDates = new ArrayList<>();
 
     ListView listView;
     ArrayAdapter<String> appointmentAdapter;
@@ -82,12 +88,15 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     }
                     Log.d("Today's date", date);
 
-                    appointments.add(appointment);
 
+                    dbLength++;
                     //check if the appointment's cancelled or scheduled before the current date
                     if (appointment.getCancelled().equals("No") && appointment.getDate().compareTo(date) >= 0) {
                         a.add(appointment.getService() + "\nDate: " + appointment.getDate() + " Time: "
                                 + appointment.getTime() + "\nAdditional Info:\n " + appointment.getInfo());
+
+                        //To get the date from the listView at a position (used to query the db for a child with the same date)
+                        appDates.add(appointment.getDate());
 
                         // Debug logs to make sure that everything in the database is getting read correctly.
                         Log.d("Service", appointment.getService());
@@ -100,7 +109,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 // After the appointments are read and stored properly, it is connected to the list view adapter to display it.
                 appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
                 listView.setAdapter(appointmentAdapter);
-                Log.d("List size", Long.toString(appointments.size()));
+                Log.d("List size", dbLength.toString());
 
                 //attach an alert dialog to each listView item
                 cancelEditAppointment();
@@ -129,12 +138,37 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
                 builder.setPositiveButton("Cancel Appointment", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // User clicked OK button
-                        Log.d("Positive", "The positive button was clicked");
-                        Log.d("Progress", "Position: " + position);
-                        Log.d("Removed", "Removed appointment at position " + position);
-                        DatabaseReference myChangeRef = database.getReference("appointment/" + currentUser.getUid() + "/" + position + "/cancelled");
-                        myChangeRef.setValue("Yes");
+                        // User clicked cancelAppointment option
+                        final DatabaseReference myChangeRef = database.getReference("appointment/" + currentUser.getUid());
+                        Query query = myChangeRef.orderByChild("date").equalTo(appDates.get(position));
+
+                        //this should only fire if it found a match
+                        query.addChildEventListener(
+                                new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        //myChangeReg would refer to path                  : ApprovedEvents
+                                        //adding the key as a child would make it : A/Record1
+                                        myChangeRef.child(dataSnapshot.getKey()).child("cancelled").setValue("Yes");
+                                    }
+
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                                    }
+                                });
 
                         //refresh the activity
                         finish();
@@ -144,6 +178,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
                 builder.setNegativeButton("Edit Appointment", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        //User clicked Edit Appointment option
                         editAppointment(position);
 
                         //refresh the activity
@@ -154,7 +189,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
 
                 builder.setNeutralButton("Nevermind", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
+                        // User clicked Nevermind option
                     }
                 });
                 AlertDialog dialog = builder.create();
@@ -166,7 +201,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
     public void createNewAppointment(View view) {
         // Go to the CreateAppointmentActivity.
         Intent intent = new Intent(this, CreateAppointmentActivity.class);
-        intent.putExtra(LIST_SIZE_MESSAGE, appointments.size());
+        intent.putExtra(LIST_SIZE_MESSAGE, dbLength);
         intent.putExtra(FUNCTION_NUMBER, 1);
         startActivity(intent);
     }
