@@ -87,7 +87,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                         Log.d("else Fired", appointment.getCancelled().getClass().getName());
                     }
                     Log.d("Today's date", date);
-
+                    Log.d("Child key", childSnapshot.getKey());
 
                     dbLength++;
                     //check if the appointment's cancelled or scheduled before the current date
@@ -179,11 +179,38 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                 builder.setNegativeButton("Edit Appointment", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         //User clicked Edit Appointment option
-                        editAppointment(position);
+                        final DatabaseReference myChangeRef = database.getReference("appointment/" + currentUser.getUid());
+                        Query query = myChangeRef.orderByChild("date").equalTo(appDates.get(position));
+                        //this should only fire if it found a match
+                        query.addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                String sKey = null;
+                                sKey = dataSnapshot.getKey();
+                                int key = Integer.parseInt(sKey);
+                                editAppointment(key);
+                            }
 
-                        //refresh the activity
-                        finish();
-                        startActivity(getIntent());
+                            @Override
+                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                            }
+
+                            @Override
+                            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 });
 
