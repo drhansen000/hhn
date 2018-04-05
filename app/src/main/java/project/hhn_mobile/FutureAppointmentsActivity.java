@@ -107,7 +107,7 @@ public class FutureAppointmentsActivity extends AppCompatActivity {
                     }
                 }
                 // After the appointments are read and stored properly, it is connected to the list view adapter to display it.
-                appointmentAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, a);
+                appointmentAdapter = new ArrayAdapter<>(context, R.layout.list_custom, a);
                 listView.setAdapter(appointmentAdapter);
                 Log.d("List size", dbLength.toString());
 
