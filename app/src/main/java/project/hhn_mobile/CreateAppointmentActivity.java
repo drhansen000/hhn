@@ -177,7 +177,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                 }
 
                 // Connect the service name list array to the spinner so that the spinner is populated with the correct info.
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, nameList);
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, R.layout.spinner_layout, nameList);
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 spinner.setAdapter(dataAdapter);
             }
