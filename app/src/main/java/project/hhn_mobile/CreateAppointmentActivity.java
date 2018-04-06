@@ -5,11 +5,9 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -34,33 +32,30 @@ import java.util.Calendar;
 import java.util.List;
 
 public class CreateAppointmentActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef;
-    Context context;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private Context context;
     private DatePickerDialog.OnDateSetListener onDateSetListener;
     private TimePickerDialog.OnTimeSetListener onTimeSetListener;
 
     private TextView displayDate;
     private TextView displayTime;
-    private TextView textView5;
-    private EditText editText6;
-    private Spinner spinner;
+    private EditText additionalInfo;
+    private Spinner serviceInfo;
 
-    List<Service> services = new ArrayList<>();
-    List<String> nameList = new ArrayList<>();
+    private List<Service> services = new ArrayList<>();
+    private List<String> nameList = new ArrayList<>();
     int appointmentPosition = 0;
 
-    String description = "";
-    String service = null;
+    private String service = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_appointment);
 
-        textView5 = findViewById(R.id.textView5);
+        TextView title = findViewById(R.id.title);
 
-        displayTime = (TextView) findViewById(R.id.timeView);
+        displayTime = findViewById(R.id.timeView);
         displayTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,15 +73,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                String sMinute;
-
-                if (minute < 10) {
-                    sMinute = "0" + minute;
-                } else {
-                    sMinute = "" + minute;
-                }
-
-                String appTime = hour + ":" + sMinute;
+                String appTime = hour + ":" + minute;
                 displayTime.setText(appTime);
             }
         };
@@ -143,29 +130,30 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         if (n == 1) {
             appointmentPosition = intent.getIntExtra(FutureAppointmentsActivity.LIST_SIZE_MESSAGE, 0);
             Log.d("Appointment list size", Long.toString(appointmentPosition));
-            textView5.setText("Create an Appointment");
+            title.setText("Create an Appointment");
         } else {
             appointmentPosition = intent.getIntExtra(FutureAppointmentsActivity.APPOINTMENT_POSITION, 0);
             Log.d("Appointment Position", Long.toString(appointmentPosition));
-            textView5.setText("Edit Appointment");
+            title.setText("Edit Appointment");
         }
 
-        editText6 = findViewById(R.id.editText6);
+        additionalInfo = findViewById(R.id.additionalInfo);
 
-        spinner = findViewById(R.id.spinner);
-        spinner.setOnItemSelectedListener(this);
+        serviceInfo = findViewById(R.id.serviceInfo);
+        serviceInfo.setOnItemSelectedListener(this);
 
         context = getApplicationContext();
 
         // Populate the spinner with the service options from the database.
-        myRef = database.getReference();
-        myRef.child("service").addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference dbRef = database.getReference();
+        dbRef.child("service").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
                     // Service nodes in the database are read as objects into a Service object and loaded into the correct arrays.
                     Service service = childSnapshot.getValue(Service.class);
                     services.add(service);
+                    assert service != null;
                     nameList.add(service.getFullService());
 
                     // Debug logs to make sure that everything is getting read from the database correctly.
@@ -177,9 +165,9 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                 }
 
                 // Connect the service name list array to the spinner so that the spinner is populated with the correct info.
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(context, R.layout.spinner_layout, nameList);
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(context, R.layout.spinner_layout, nameList);
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinner.setAdapter(dataAdapter);
+                serviceInfo.setAdapter(dataAdapter);
             }
 
             @Override
@@ -196,7 +184,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         Context context = this;
 
-        description = editText6.getText().toString();
+        String description = additionalInfo.getText().toString();
 
         // Look at the URL below to learn more about the following variable instantiation
         // https://developer.android.com/reference/android/preference/PreferenceManager.html
@@ -220,7 +208,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         // passed in the second parameter
         String storedDescription = prefs.getString("DESCRIPTION", "Description");
 
-        editText6.setText(storedDescription);
+        additionalInfo.setText(storedDescription);
     }
 
     @Override
@@ -242,6 +230,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         // References are made to each leaf in an appointment node under the current user's UID.
         String size = Integer.toString(appointmentPosition);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
         DatabaseReference myServiceRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/service");
         DatabaseReference myDateRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/date");
         DatabaseReference myTimeRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/time");
@@ -252,7 +241,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         myServiceRef.setValue(service);
         myDateRef.setValue(displayDate.getText().toString());
         myTimeRef.setValue(displayTime.getText().toString());
-        myInfoRef.setValue(editText6.getText().toString());
+        myInfoRef.setValue(additionalInfo.getText().toString());
         myCancelRef.setValue("No");
 
         // After everything is written to the database the user is sent back to the FutureAppointmentActivity.
