@@ -14,6 +14,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * This activity is creates an account. It only utilizes the email and password inputs. It gets the
+ * input from the login activity and populates said input fields. It will create an account and then
+ * log the user in.
+ */
+
 public class CreateAccountActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -22,11 +28,16 @@ public class CreateAccountActivity extends AppCompatActivity {
     private String password;
     private String passwordVer;
 
-    EditText editUserName;
-    EditText editEmail;
-    EditText editPassword;
-    EditText editPasswordVer;
+    private EditText editUserName;
+    private EditText editEmail;
+    private EditText editPassword;
+    private EditText editPasswordVer;
 
+    /**
+     * This function creates the activity and populates the email and password inputs with the passed
+     * in values.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +60,11 @@ public class CreateAccountActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    /**
+     * This function checks that the passwords match, if they do, then it will create an account
+     * utilizing the Firebase createUser method.
+     * @param view
+     */
     public void createAccount(View view) {
         final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
         final String TAG = "CreateAccount: ";
@@ -59,7 +75,7 @@ public class CreateAccountActivity extends AppCompatActivity {
         password = editPassword.getText().toString();
         passwordVer = editPasswordVer.getText().toString();
 
-        //make sure that both passwords match
+        // Make sure that both passwords match
         if (password.equals(passwordVer)) {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -78,6 +94,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                         }
                     });
         } else {
+            // Display an error message if the passwords don't match
             Toast.makeText(CreateAccountActivity.this, "Passwords do not match.",
                     Toast.LENGTH_SHORT).show();
         }

@@ -31,7 +31,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+/**
+ * This Activity creates or edits an appointment. If it creates an appointment, it will add it to
+ * the end of the user's appointment table. Or else, it will overwrite the passed in index.
+ */
 public class CreateAppointmentActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private Context context;
     private DatePickerDialog.OnDateSetListener onDateSetListener;
@@ -44,10 +49,16 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
     private List<Service> services = new ArrayList<>();
     private List<String> nameList = new ArrayList<>();
-    int appointmentPosition = 0;
+    private int appointmentPosition = 0;
 
     private String service = null;
 
+    /**
+     * This function creates the activity. It contains date and time pickers, a spinner that
+     * dynamically displays the information of a selected service, and an input field for additional
+     * information.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,14 +68,14 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         displayTime = findViewById(R.id.timeView);
         displayTime.setOnClickListener(new View.OnClickListener() {
-            //when the view is clicked, open the clock view
+            // When the view is clicked, open the clock view
             @Override
             public void onClick(View view) {
-                //get current time
+                // Get current time
                 Calendar c = Calendar.getInstance();
                 int hour = c.get(Calendar.HOUR_OF_DAY);
                 int minute = c.get(Calendar.MINUTE);
-                //create Clock View, populating input with current time
+                // Create Clock View, populating input with current time
                 TimePickerDialog timeDialog = new TimePickerDialog(
                         CreateAppointmentActivity.this,
                         onTimeSetListener,
@@ -73,7 +84,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                 timeDialog.show();
             }
         });
-        //set the textView to the time selected
+        // Set the textView to the time selected
         onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
@@ -84,16 +95,16 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         displayDate = findViewById(R.id.dateView);
         displayDate.setOnClickListener(new View.OnClickListener () {
-            //when the view is clicked, open the calendar view
+            // When the view is clicked, open the calendar view
             @Override
             public void onClick(View view) {
-                //get the current date
+                // Get the current date
                 Calendar cal = Calendar.getInstance();
                 int year     = cal.get(Calendar.YEAR);
                 int month    = cal.get(Calendar.MONTH);
                 int day      = cal.get(Calendar.DAY_OF_MONTH);
 
-                //set up DateDialog and populate input with current date
+                // Set up DateDialog and populate input with current date
                 DatePickerDialog dateDialog = new DatePickerDialog(
                         CreateAppointmentActivity.this,
                         onDateSetListener,
@@ -102,15 +113,15 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
             }
         });
         onDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            //when the date is chosen populate the TextView
+            // When the date is chosen populate the TextView
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 String sMonth;
                 String sDay;
-                //because they count January as 0
+                // Because they count January as 0
                 month += 1;
 
-                //add a 0 to the string if it's less than ten
+                // Add a 0 to the string if it's less than ten
                 if (month < 10) {
                     sMonth = "0" + month;
                 } else {
@@ -122,7 +133,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                     sDay = "" + day;
                 }
 
-                //set textview to date selected
+                // Set textview to date selected
                 String date = year + "-" + sMonth + "-" + sDay;
                 displayDate.setText(date);
             }
@@ -187,10 +198,12 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         Log.d("Display time", displayTime.getText().toString());
     }
 
+    /**
+     * This function stores the additional info that the user inputted (it might be a lot to retype!)
+     */
     @Override
     protected void onPause() {
         super.onPause();
-
         Context context = this;
 
         String description = additionalInfo.getText().toString();
@@ -205,6 +218,9 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         preferencesEditor.apply(); //this applies the changes to the preferences
     }
 
+    /**
+     * This function refills the additional information input field.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -220,6 +236,14 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         additionalInfo.setText(storedDescription);
     }
 
+    /**
+     * This fires if a spinner item was selected. It displays a toast containing the service
+     * information.
+     * @param adapterView
+     * @param view
+     * @param i
+     * @param l
+     */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         // On selecting a spinner item
@@ -230,11 +254,20 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         Toast.makeText(adapterView.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Override all methods of AdapterView interface.
+     * @param adapterView
+     */
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        // Nothing is done here, don't really know what should go here.
     }
 
+    /**
+     * This fires if the user clicks the confirm appointment button. It checks that all of the input
+     * fields are selected. If so, then it inserts it into the user's appointment table. If not, it
+     * displays an error message.
+     * @param view
+     */
     public void confirmAppointment(View view) {
         // References are made to each leaf in an appointment node under the current user's UID.
         String size = Integer.toString(appointmentPosition);
@@ -246,9 +279,9 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         DatabaseReference myInfoRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/info");
         DatabaseReference myCancelRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/cancelled");
 
-        //check it all input fields are filled in
+        // Check it all input fields are filled in
         if ((displayDate.getText().toString().equals("Select Date")) || (displayTime.getText().toString().equals("Select Time"))) {
-            //if not, display error message and don't submit to database
+            // If not, display error message and don't submit to database
             Toast.makeText(this, "Please fill in the required fields!", Toast.LENGTH_LONG).show();
         } else {
             // Each piece of data is written to the database, it has to be done separately to my knowledge.

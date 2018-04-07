@@ -20,17 +20,29 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/**
+ * This activity is the login page. The user may enter his/her credentials to login. If they don't
+ * have an account they can click the create account button and be sent to the CreateAccountActivity.
+ * If they successfully login, they will be sent to the FutureAppointmentsActivity, which displays
+ * their future appointments
+ */
+
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
 
     // These are two intent messages used to send the email and password strings to the CreateAccountActivity.
     public static final String EMAIL_MESSAGE = "project.hhn_mobile.EMAIL";
     public static final String PASS_MESSAGE = "project.hhn_mobile.PASSWORD";
 
-    private FirebaseAuth mAuth;
+    private EditText editEmail;
+    private EditText editPassword;
 
-    EditText editEmail;
-    EditText editPassword;
-
+    /**
+     * This function creates the view. If the user has previously logged in, then they will be directed
+     * towards the FutureAppointmentsActivity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,16 +58,20 @@ public class MainActivity extends AppCompatActivity {
 
         // If the current user is not null (i.e. someone has logged in previously) then immediately log them in.
         if (user != null) {
-            // Souts are for debug purposes right now
-            System.out.println("Name: " + user.getDisplayName());
-            System.out.println("Email: " + user.getEmail());
-            System.out.println("UID: " + user.getUid());
+            Log.d("Name", user.getDisplayName());
+            Log.d("Email", user.getEmail());
+            Log.d("UID", user.getUid());
 
             Intent intent = new Intent(this, FutureAppointmentsActivity.class);
             startActivity(intent);
         }
     }
 
+    /**
+     * Fired when user clicks Signin button. It will take the credentials entered and attempt to
+     * authenticate the user, utilizing the Firebase signin method.
+     * @param view
+     */
     public void signIn(View view) {
         final Intent intent = new Intent(this, FutureAppointmentsActivity.class);
         final String TAG = "SignIn: ";
@@ -64,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         String email = editEmail.getText().toString();
         String password = editPassword.getText().toString();
 
-        //utilize the firebase signin Method
+        // Utilize the firebase signin Method
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -83,6 +99,11 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Fires if the user chose to create an account. It will take the credentials entered and pass
+     * them to the CreateAccountActivity.
+     * @param view
+     */
     public void signUp(View view) {
         Intent intent = new Intent(this, CreateAccountActivity.class);
 
