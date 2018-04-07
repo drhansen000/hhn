@@ -57,11 +57,14 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         displayTime = findViewById(R.id.timeView);
         displayTime.setOnClickListener(new View.OnClickListener() {
+            //when the view is clicked, open the clock view
             @Override
             public void onClick(View view) {
+                //get current time
                 Calendar c = Calendar.getInstance();
                 int hour = c.get(Calendar.HOUR_OF_DAY);
                 int minute = c.get(Calendar.MINUTE);
+                //create Clock View, populating input with current time
                 TimePickerDialog timeDialog = new TimePickerDialog(
                         CreateAppointmentActivity.this,
                         onTimeSetListener,
@@ -70,6 +73,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                 timeDialog.show();
             }
         });
+        //set the textView to the time selected
         onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
@@ -80,23 +84,25 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         displayDate = findViewById(R.id.dateView);
         displayDate.setOnClickListener(new View.OnClickListener () {
+            //when the view is clicked, open the calendar view
             @Override
             public void onClick(View view) {
+                //get the current date
                 Calendar cal = Calendar.getInstance();
                 int year     = cal.get(Calendar.YEAR);
                 int month    = cal.get(Calendar.MONTH);
                 int day      = cal.get(Calendar.DAY_OF_MONTH);
 
-                //set up DatePickerDialog context, theme, and information
+                //set up DateDialog and populate input with current date
                 DatePickerDialog dateDialog = new DatePickerDialog(
                         CreateAppointmentActivity.this,
                         onDateSetListener,
                         year, month, day);
-
                 dateDialog.show();
             }
         });
         onDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            //when the date is chosen populate the TextView
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 String sMonth;
@@ -240,7 +246,9 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         DatabaseReference myInfoRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/info");
         DatabaseReference myCancelRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/cancelled");
 
+        //check it all input fields are filled in
         if ((displayDate.getText().toString().equals("Select Date")) || (displayTime.getText().toString().equals("Select Time"))) {
+            //if not, display error message and don't submit to database
             Toast.makeText(this, "Please fill in the required fields!", Toast.LENGTH_LONG).show();
         } else {
             // Each piece of data is written to the database, it has to be done separately to my knowledge.
