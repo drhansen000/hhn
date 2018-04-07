@@ -176,6 +176,9 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
                 Log.d("On Cancelled: ", "Something messed up");
             }
         });
+
+        Log.d("Display date", displayDate.getText().toString());
+        Log.d("Display time", displayTime.getText().toString());
     }
 
     @Override
@@ -237,15 +240,19 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         DatabaseReference myInfoRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/info");
         DatabaseReference myCancelRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/cancelled");
 
-        // Each piece of data is written to the database, it has to be done separately to my knowledge.
-        myServiceRef.setValue(service);
-        myDateRef.setValue(displayDate.getText().toString());
-        myTimeRef.setValue(displayTime.getText().toString());
-        myInfoRef.setValue(additionalInfo.getText().toString());
-        myCancelRef.setValue("No");
+        if ((displayDate.getText().toString().equals("Select Date")) || (displayTime.getText().toString().equals("Select Time"))) {
+            Toast.makeText(this, "Please fill in the required fields!", Toast.LENGTH_LONG).show();
+        } else {
+            // Each piece of data is written to the database, it has to be done separately to my knowledge.
+            myServiceRef.setValue(service);
+            myDateRef.setValue(displayDate.getText().toString());
+            myTimeRef.setValue(displayTime.getText().toString());
+            myInfoRef.setValue(additionalInfo.getText().toString());
+            myCancelRef.setValue("No");
 
-        // After everything is written to the database the user is sent back to the FutureAppointmentActivity.
-        Intent intent = new Intent(this, FutureAppointmentsActivity.class);
-        startActivity(intent);
+            // After everything is written to the database the user is sent back to the FutureAppointmentActivity.
+            Intent intent = new Intent(this, FutureAppointmentsActivity.class);
+            startActivity(intent);
+        }
     }
 }
