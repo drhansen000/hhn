@@ -88,7 +88,13 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                String appTime = hour + ":" + minute;
+                String sMinute;
+                if (minute < 10) {
+                    sMinute = "0" +  minute;
+                } else {
+                    sMinute = "" + minute;
+                }
+                String appTime = hour + ":" + sMinute;
                 displayTime.setText(appTime);
             }
         };
