@@ -64,7 +64,7 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textMultiLine"
-        android:textColor="@color/text_color_primary"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -105,29 +105,29 @@
 
     <TextView
         android:id="@+id/dateView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="108dp"
+        android:layout_height="33dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Select Date"
-        android:textColor="@color/text_color_primary"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/subHeader2"
         app:layout_constraintEnd_toStartOf="@+id/timeView"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serviceInfo" />
 
-    <TextView
+    <Spinner
         android:id="@+id/timeView"
-        android:layout_width="wrap_content"
-        android:layout_height="21dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Select Time"
-        android:textColor="@color/text_color_primary"
+        android:layout_width="127dp"
+        android:layout_height="31dp"
+        android:layout_marginBottom="35dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintBottom_toTopOf="@+id/subHeader2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/dateView"
         app:layout_constraintTop_toBottomOf="@+id/serviceInfo" />
 

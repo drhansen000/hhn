@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import java.util.List;
  * This Activity creates or edits an appointment. If it creates an appointment, it will add it to
  * the end of the user's appointment table. Or else, it will overwrite the passed in index.
  */
-public class CreateAppointmentActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class CreateAppointmentActivity extends AppCompatActivity{
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private Context context;
@@ -43,15 +44,17 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
     private TimePickerDialog.OnTimeSetListener onTimeSetListener;
 
     private TextView displayDate;
-    private TextView displayTime;
     private EditText additionalInfo;
     private Spinner serviceInfo;
+    private Spinner time;
+    private AppTime appTimes = new AppTime();
 
     private List<Service> services = new ArrayList<>();
     private List<String> nameList = new ArrayList<>();
     private int appointmentPosition = 0;
 
     private String service = null;
+    private String appTime = null;
 
     /**
      * This function creates the activity. It contains date and time pickers, a spinner that
@@ -66,38 +69,15 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
 
         TextView title = findViewById(R.id.title);
 
-        displayTime = findViewById(R.id.timeView);
-        displayTime.setOnClickListener(new View.OnClickListener() {
-            // When the view is clicked, open the clock view
-            @Override
-            public void onClick(View view) {
-                // Get current time
-                Calendar c = Calendar.getInstance();
-                int hour = c.get(Calendar.HOUR_OF_DAY);
-                int minute = c.get(Calendar.MINUTE);
-                // Create Clock View, populating input with current time
-                TimePickerDialog timeDialog = new TimePickerDialog(
-                        CreateAppointmentActivity.this,
-                        onTimeSetListener,
-                        hour, minute,
-                        false);
-                timeDialog.show();
-            }
-        });
-        // Set the textView to the time selected
-        onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                String sMinute;
-                if (minute < 10) {
-                    sMinute = "0" +  minute;
-                } else {
-                    sMinute = "" + minute;
-                }
-                String appTime = hour + ":" + sMinute;
-                displayTime.setText(appTime);
-            }
-        };
+        time = findViewById(R.id.timeView);
+        time.setOnItemSelectedListener(new TimeSpinnerClass());
+
+        ArrayAdapter<String> appArray = new ArrayAdapter<String>(
+                CreateAppointmentActivity.this,
+                android.R.layout.simple_spinner_item,
+                appTimes.getList());
+        appArray.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        time.setAdapter(appArray);
 
         displayDate = findViewById(R.id.dateView);
         displayDate.setOnClickListener(new View.OnClickListener () {
@@ -163,7 +143,7 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         additionalInfo = findViewById(R.id.additionalInfo);
 
         serviceInfo = findViewById(R.id.serviceInfo);
-        serviceInfo.setOnItemSelectedListener(this);
+        serviceInfo.setOnItemSelectedListener(new ServicesSpinnerClass());
 
         context = getApplicationContext();
 
@@ -201,7 +181,6 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         });
 
         Log.d("Display date", displayDate.getText().toString());
-        Log.d("Display time", displayTime.getText().toString());
     }
 
     /**
@@ -243,29 +222,40 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
     }
 
     /**
-     * This fires if a spinner item was selected. It displays a toast containing the service
-     * information.
-     * @param adapterView
-     * @param view
-     * @param i
-     * @param l
+     * Create a separate inner spinner class so that the OnItemSelectedListener doesn't conflict
+     * between the 2 Spinner objects.
      */
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        // On selecting a spinner item
-        String item = adapterView.getItemAtPosition(i).toString();
-        service = item;
+    class ServicesSpinnerClass implements AdapterView.OnItemSelectedListener
+    {
+        public void onItemSelected(AdapterView<?> parent, View v, int position, long id)
+        {
+            // On selecting a spinner item
+            String item = parent.getItemAtPosition(position).toString();
+            service = item;
+        }
 
-        // Showing selected spinner item
-        Toast.makeText(adapterView.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
     }
 
     /**
-     * Override all methods of AdapterView interface.
-     * @param adapterView
+     * Second Spinner class
      */
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
+    class TimeSpinnerClass implements AdapterView.OnItemSelectedListener
+    {
+        public void onItemSelected(AdapterView<?> parent, View v, int position, long id)
+        {
+            // On selecting a spinner item
+            String item = parent.getItemAtPosition(position).toString();
+            appTime = item;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+
+        }
     }
 
     /**
@@ -286,14 +276,14 @@ public class CreateAppointmentActivity extends AppCompatActivity implements Adap
         DatabaseReference myCancelRef = database.getReference("appointment/" + user.getUid() + "/" + size + "/cancelled");
 
         // Check it all input fields are filled in
-        if ((displayDate.getText().toString().equals("Select Date")) || (displayTime.getText().toString().equals("Select Time"))) {
+        if ((displayDate.getText().toString().equals("Select Date"))) {
             // If not, display error message and don't submit to database
             Toast.makeText(this, "Please fill in the required fields!", Toast.LENGTH_LONG).show();
         } else {
             // Each piece of data is written to the database, it has to be done separately to my knowledge.
+            myTimeRef.setValue(appTime);
             myServiceRef.setValue(service);
             myDateRef.setValue(displayDate.getText().toString());
-            myTimeRef.setValue(displayTime.getText().toString());
             myInfoRef.setValue(additionalInfo.getText().toString());
             myCancelRef.setValue("No");
 
