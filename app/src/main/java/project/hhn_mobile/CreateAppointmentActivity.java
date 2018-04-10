@@ -41,7 +41,6 @@ public class CreateAppointmentActivity extends AppCompatActivity{
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private Context context;
     private DatePickerDialog.OnDateSetListener onDateSetListener;
-    private TimePickerDialog.OnTimeSetListener onTimeSetListener;
 
     private TextView displayDate;
     private EditText additionalInfo;
